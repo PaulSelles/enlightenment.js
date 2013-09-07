@@ -13,349 +13,637 @@
     <script>
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
-	  canvas.width = window.innerWidth;
-	  canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-  var drawKey = function(ctx) {
+  var drawKey = function(ctx, xOffset=0, yOffset=0) {
     ctx.beginPath();
-	ctx.arc(-15,0,5,0,2*Math.PI);
-    ctx.moveTo(-10,0);
-	ctx.lineTo(15,0);
-	ctx.lineTo(15,-10);
-    ctx.moveTo(10,-5);
-    ctx.lineTo(10,0);
+    ctx.arc(-15+xOffset,0+yOffset,5,0,2*Math.PI);
+    ctx.moveTo(-10+xOffset,0+yOffset);
+    ctx.lineTo(15+xOffset,0+yOffset);
+    ctx.lineTo(15+xOffset,-10+yOffset);
+    ctx.moveTo(10+xOffset,-5+yOffset);
+    ctx.lineTo(10+xOffset,0+yOffset);
     ctx.lineWidth = 3;
-	ctx.stroke();
-    ctx.closePath();
-  }
-
-  var rectTestPattern = function(ctx, width, height) {
-    drawKey(ctx);
-    ctx.beginPath();
-    ctx.rect(-width/2,-height/2,width,height);
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-
-  var triangle1TestPattern = function(ctx, length) {
-
-    var midLength = Math.sqrt(Math.pow(length/2,2)+Math.pow(length/4,2));
-    var shortOffset = midLength*Math.sin(Math.PI/8);
-    var longOffset = midLength*Math.cos(Math.PI/8);
-	
-    drawKey(ctx);
-
-    ctx.beginPath();
-    ctx.moveTo(shortOffset,-longOffset);
-    ctx.lineTo(shortOffset,-longOffset+length);
-    ctx.lineTo(shortOffset-length,-longOffset+length);
-    ctx.lineTo(shortOffset,-longOffset);
-	ctx.lineWidth = 1;
+    ctx.strokeStyle='#886A08';
     ctx.stroke();
     ctx.closePath();
   }
+  
+  //function Wallpaper() {
 
-  var rectGrid = function(ctx, width, height, patternAngle, patternFunction) {
-    ctx.translate(canvas.width/2,canvas.height/2);
-	ctx.rotate(patternAngle*Math.PI/180);
-
-	var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
-	var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
-
-	for (var y=-canvas.height-heightPad-height/2; y<=canvas.height+heightPad+height/2; y+=height) {
-   	  for (var x=-canvas.width-widthPad-width/2; x<=canvas.width+widthPad+width/2; x+=width) {
-		patternFunction(x,y);
-      }
+    var rectTestPattern = function(ctx, width, height) {
+      drawKey(ctx);
+      ctx.beginPath();
+      ctx.rect(-width/2,-height/2,width,height);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle='#A4A4A4';
+      ctx.stroke();
+      ctx.closePath();
     }
-    ctx.translate(-canvas.width/2,-canvas.height/2);
-  }
-
-  var obliqueGrid = function(ctx, width, height, patternAngle, skewAngle, patternFunction) {
-    ctx.translate(canvas.width/2,canvas.height/2);
-	ctx.rotate(patternAngle*Math.PI/180);
-
-	var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
-	var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
-
-	var xOffset=height*Math.tan(skewAngle*Math.PI/180);
-    var heightCounter=0;
-
-	for (var y=-canvas.height-heightPad-height/2; y<=canvas.height+heightPad+height/2; y+=height) {
-   	  for (var x=-canvas.width-widthPad-width/2-Math.ceil(height*Math.tan(skewAngle))*(width-xOffset); x<=canvas.width+widthPad+width/2+Math.ceil(height*Math.tan(skewAngle))*xOffset; x+=width) {
-		patternFunction(x,y);
-      }
+    
+    var triangleTestPattern = function(ctx,x1,x2,y1,y2) {
+    
+      var xOffset=(1/3)*(x1+x2);
+      var yOffset=(1/3)*(y1+y2);
+      
+      drawKey(ctx,xOffset,yOffset);
+    
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineTo(0,0);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle='#A4A4A4';
+      ctx.stroke();
+      ctx.closePath();
     }
-    ctx.translate(-canvas.width/2,-canvas.height/2);
-  }
+    
+    var triangle1TestPattern = function(ctx, width, height=width) {
 
-  // Group 1
-  var p1 = function(ctx, width, height, patternAngle, skewAngle=0, skew=true) {
-	if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
-    obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
-		
-		var xOffset=height*Math.tan(skewAngle*Math.PI/180)/4;
-
-		// Draw original
-	    ctx.translate(x+xOffset,y);
-		if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
-	    rectTestPattern(ctx,width,height);
-		if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
-		ctx.translate(-(x+xOffset),-y);
-    });
-  }
-
-  // Group 2
-  var p2 = function(ctx, width, height, patternAngle, skewAngle=0, skew=true) {
-	if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
-    obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
-		
-		// Calculate the offset values
-		var xOffset=height*Math.tan(skewAngle*Math.PI/180)/4;
-        var yOffset=width/4;
-
-		//window.alert(xOffset);
-
-		// Draw original
-        ctx.translate(x-xOffset,y-yOffset);
-		if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
-	    rectTestPattern(ctx,width,height/2);
-		if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
-		ctx.translate(-(x-xOffset),-(y-yOffset));
-
-	    // Draw rotated image	
-		ctx.translate(x+xOffset,y+yOffset);
-		if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
-        ctx.scale(-1,-1);
-	    rectTestPattern(ctx,width,height/2);
-        ctx.scale(-1,-1);
-		if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
-		ctx.translate(-(x+xOffset),-(y+yOffset));
-    });
-  }	
-
-  // Group 3
-  var pm = function(ctx, width, height, patternAngle) {
-    rectGrid(ctx, width, height, patternAngle, function(x,y) {
-
-		// Calculate the offset values
-        var yOffset=height/4;
-
-		// Draw original 
- 		ctx.translate(x,y-yOffset);
-	    rectTestPattern(ctx,width,height/2);
-		ctx.translate(-x,-(y-yOffset));
-
-		// Draw mirror image
-		ctx.translate(x,y+yOffset);
-        ctx.scale(1,-1);
-	    rectTestPattern(ctx,width,height/2);
-        ctx.scale(1,-1);
-		ctx.translate(-x,-(y+yOffset));
-    });
-  }
-
-  // Group 4
-  var pg = function(ctx, width, height, patternAngle) {
-    rectGrid(ctx, width, height, patternAngle, function(x,y) {
-
-		// Calculate the offset values
-        var xOffset=width/4;
-
-		// Draw original 
- 		ctx.translate(x-xOffset,y);
-	    rectTestPattern(ctx,width/2,height);
-		ctx.translate(-(x-xOffset),-y);
-
-		// Draw mirror image
-		ctx.translate(x+xOffset,y);
-        ctx.scale(1,-1);
-	    rectTestPattern(ctx,width/2,height);
-        ctx.scale(1,-1);
-		ctx.translate(-(x+xOffset),-y);
-    });
-  }
-
-  // Group 5
-  var pmm = function(ctx, width, height, patternAngle) {
-    rectGrid(ctx, width, height, patternAngle, function(x,y) {
-
-		// Calculate the offset values
-        var xOffset=width/4;
-        var yOffset=height/4;
-
-		// Draw original (bottom left) 
- 		ctx.translate(x-xOffset,y+yOffset);
-	    rectTestPattern(ctx,width/2,height/2);
-		ctx.translate(-(x-xOffset),-(y+yOffset));
-
-		// Draw mirror image (top left)
-		ctx.translate(x-xOffset,y-yOffset);
-        ctx.scale(1,-1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(1,-1);
-		ctx.translate(-(x-xOffset),-(y-yOffset));
+      var x1=width;
+      var y1=0;
+      var x2=width/2;
+      var y2=height;
+ 
+      triangleTestPattern(ctx,x1,x2,y1,y2);
+    }
+    
+    var triangle2TestPattern = function(ctx, width, height=width) {
+    
+      var x1=0;
+      var y1=height;
+      var x2=-width;
+      var y2=0;
+     
+      triangleTestPattern(ctx,x1,x2,y1,y2);
+    }
+    
+    var triangle3TestPattern = function(ctx, width, height=width) {
 	
-        // (top right)	
-        ctx.translate(x+xOffset,y-yOffset);
-        ctx.scale(-1,-1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(-1,-1);
-		ctx.translate(-(x+xOffset),-(y-yOffset));
+      var x1=0;
+      var y1=height;
+      var x2=-width;
+      var y2=height;
+     
+      triangleTestPattern(ctx,x1,x2,y1,y2);
+    }
+    
+    var triangle4TestPattern = function(ctx, length) {
+    
+      var x1=-length;
+      var y1=0;
+      var x2=-length/2;
+      var y2=-length*Math.sqrt(3)/2;
+      
+      triangleTestPattern(ctx,x1,x2,y1,y2);
+    }
+    
+    var triangle5TestPattern = function(ctx, width, height=width) {
+    
+      var x1=width/2;
+      var y1=height;
+      var x2=-width/2;
+      var y2=height;
+      
+      triangleTestPattern(ctx,x1,x2,y1,y2);
+    }
+    
+    var rombicTestPattern = function(ctx, length) {
+    
+      var x1=-length/2;
+      var y1=length*Math.sqrt(3)/2;
+      var x2=-length;
+      var y2=0;
+      var x3=-length/2;
+      var y3=-length*Math.sqrt(3)/2;
+      
+      var xOffset=(1/3)*(x1+x2);
+      
+      drawKey(ctx,xOffset,0);
+    
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineTo(x3,y3);
+      ctx.lineTo(0,0);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle='#A4A4A4';
+      ctx.stroke();
+      ctx.closePath();
+    }
 
-        // (bottom right)
-		ctx.translate(x+xOffset,y+yOffset);
-        ctx.scale(-1,1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(-1,1);
-		ctx.translate(-(x+xOffset),-(y+yOffset));
-    });
-  }
+    var rectGrid = function(ctx, width, height, patternAngle, patternFunction) {
+      ctx.translate(canvas.width/2,canvas.height/2);
+      ctx.rotate(patternAngle*Math.PI/180);
+  
+      var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+      var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+  
+      for (var y=-canvas.height-heightPad-height/2; y<=canvas.height+heightPad+height/2; y+=height) {
+        for (var x=-canvas.width-widthPad-width/2; x<=canvas.width+widthPad+width/2; x+=width) {
+          patternFunction(x,y);
+        }
+      }
+      ctx.translate(-canvas.width/2,-canvas.height/2);
+    }
+  
+    var obliqueGrid = function(ctx, width, height, patternAngle, skewAngle, patternFunction) {
+      ctx.translate(canvas.width/2,canvas.height/2);
+      ctx.rotate(patternAngle*Math.PI/180);
+  
+      var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+      var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+  
+      var xOffset=height*Math.tan(skewAngle*Math.PI/180);
+      var heightCounter=0;
+  
+      for (var y=-canvas.height-heightPad-height/2; y<=canvas.height+heightPad+height/2; y+=height) {
+        for (var x=-canvas.width-widthPad-width/2-Math.ceil(height*Math.tan(skewAngle))*(width-xOffset); x<=canvas.width+widthPad+width/2+Math.ceil(height*Math.tan(skewAngle))*xOffset; x+=width) {
+          patternFunction(x,y);
+        }
+      }
+      ctx.translate(-canvas.width/2,-canvas.height/2);
+    }
+    
+    var rhombicGrid = function(ctx, width, height, patternAngle, patternFunction) {
+      ctx.translate(canvas.width/2,canvas.height/2);
+      ctx.rotate(patternAngle*Math.PI/180);
+  
+      var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+      var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+  
+      var heightCounter=0;
+      for (var y=-canvas.height-heightPad-height/4; y<=canvas.height+heightPad+height/4; y+=height/2) {
+        heightCounter++;
+        for (var x=-canvas.width-widthPad-width/2; x<=canvas.width+widthPad+width/2; x+=width) {
+          patternFunction(heightCounter%2==0?x:x-width/2,y);
+        }
+      }
+      ctx.translate(-canvas.width/2,-canvas.height/2)
+    }
 
-  // Group 6
-  var pmg = function(ctx, width, height, patternAngle) {
-    rectGrid(ctx, width, height, patternAngle, function(x,y) {
+    var hex1Grid = function(ctx, width, height, patternAngle, patternFunction) {
+      ctx.translate(canvas.width/2,canvas.height/2);
+      ctx.rotate(patternAngle*Math.PI/180);
+  
+      var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+      var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+  
+      var heightCounter=0;
+      for (var y=-canvas.height-heightPad-height/4; y<=canvas.height+heightPad+height/4; y+=height/2) {
+        heightCounter++;
+        for (var x=-canvas.width-widthPad-width/2; x<=canvas.width+widthPad+width/2; x+=width) {
+          patternFunction(heightCounter%2==0?x:x-width/2,y);
+        }
+      }
+      ctx.translate(-canvas.width/2,-canvas.height/2)
+    }
+    
+    var hex2Grid = function(ctx, width, height, patternAngle, patternFunction) {
+      ctx.translate(canvas.width/2,canvas.height/2);
+      ctx.rotate(patternAngle*Math.PI/180);
+  
+      var widthPad=canvas.height*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+      var heightPad=canvas.width*(Math.abs(Math.sin(patternAngle*Math.PI/180)));
+  
+      var heightCounter=0;
+      for (var y=-canvas.height-heightPad-height/4; y<=canvas.height+heightPad+height/4; y+=height/2) {
+        heightCounter++;
+        for (var x=-canvas.width-widthPad-width/2; x<=canvas.width+widthPad+width/2; x+=width) {
+            
+        }
+      }
+      ctx.translate(-canvas.width/2,-canvas.height/2)
+    }
+    
+    var hex
+    
+    // Group 1
+    var p1 = function(ctx, width, height=width, patternAngle=0, skewAngle=0, skew=true) {
+      if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
+      obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
+      
+        var offset=height*Math.tan(skewAngle*Math.PI/180)/2;
+  
+        // Draw original
+        ctx.translate(x+offset,y);
+        if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        rectTestPattern(ctx,width,height);
+        if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        ctx.translate(-(x+offset),-y);
+      });
+    }
+  
+    // Group 2
+    var p2 = function(ctx, width, height=width, patternAngle=0, skewAngle=0, skew=true) {
+    if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
+      obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {
+      
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x,y+height/2);
+  
+        // Initiate skew
+        if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          rectTestPattern(ctx,width,height);
+          ctx.translate(0,-height);
+          ctx.scale(-1,-1);
+        }      
+        
+        // remove skew
+        if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        
+        // Recenter the origin       
+        ctx.translate(-x,-(y+height/2));
+      });
+    }	
+  
+    // Group 3
+    var pm = function(ctx, width, height=width, patternAngle=0) {
+      rectGrid(ctx, width, 2*height, patternAngle, function(x,y) {
+        
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x,y+height/2);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          rectTestPattern(ctx,width,height);
+          ctx.translate(0,-height);
+          ctx.scale(1,-1);
+        }
+        
+        // Recenter the origin
+        ctx.translate(-x,-(y+height/2));
+      });
+    }
+  
+    // Group 4
+    var pg = function(ctx, width, height=width, patternAngle=0) {
+      rectGrid(ctx, 2*width, height, patternAngle, function(x,y) {
+  
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x-width/2,y);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          rectTestPattern(ctx,width,height);
+          ctx.translate(width,0);
+          ctx.scale(1,-1);
+        }
+        
+        // Recenter the origin
+        ctx.translate(-(x+1.5*width),-y);
+      });
+    }
+    
+    // Group 5
+    var cm = function(ctx, width, height, patternAngle=0) {
+      rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
+  
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x-width/2,y);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          triangle1TestPattern(ctx,width,height/2);
+          ctx.scale(1,-1);
+        }
+        
+        // Recenter the origin
+        ctx.translate(-(x-width/2),-y);
 
-		// Calculate the offset values
+      });
+    }
+  
+    // Group 6
+    var pmm = function(ctx, width, height, patternAngle=0) {
+      rectGrid(ctx, width, height, patternAngle, function(x,y) {
+      
+        // Calculate the offset values
         var xOffset=width/4;
         var yOffset=height/4;
+        ctx.translate(x-xOffset,y+yOffset);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<2; j++) {
+            rectTestPattern(ctx,width/2,height/2);
+            ctx.translate(2*xOffset,0);
+            ctx.scale(-1,1);
+          }
+          ctx.translate(0,-2*yOffset); 
+          ctx.scale(1,-1);         
+        }
+         
+        ctx.translate(-(x-xOffset),-(y+yOffset));
+      });
+    }
+  
+    // Group 7
+    var pmg = function(ctx, width, height, patternAngle=0) {
+      rectGrid(ctx, width, height, patternAngle, function(x,y) {
+      
+        // Move the origin to the center plus offset of our desired pattern
+        var xOffset=width/4;
+        var yOffset=height/4;
+        ctx.translate(x-xOffset,y+yOffset);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<2; j++) {
+            rectTestPattern(ctx,width/2,height/2);
+            ctx.translate(2*xOffset,0); 
+            ctx.rotate(Math.PI);       
+          }
+            ctx.translate(0,-2*yOffset);
+            ctx.scale(1,-1);  
+        }
+         
+        // Recenter the origin
+        ctx.translate(-(x-xOffset),-(y+yOffset));
+      });
+    }
+  
+    // Group 8
+        var pgg = function(ctx, width, height, patternAngle=0) {
+      rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
+      
+        //var x = window.innerWidth/2;
+        //var y = window.innerHeight/2;
+  
+        // Calculate the offset values
+        var offset=height/4;     
+        ctx.translate(x-width/2,y);
+        
+        for (var i=0; i<2; i++)
+        {
+          triangle1TestPattern(ctx,width,height/2);
+          ctx.rotate(Math.PI);
+          ctx.translate(-width,0);
+        }
+        
+        ctx.translate(-(x-width/2),-y);
+        
+      });
+    }
+    
+    
+    // Group 9
+    var cmm = function(ctx, width, height, patternAngle=0) {
+      rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
+      
+        //var x = window.innerWidth/2;
+        //var y = window.innerHeight/2;
+         
+        // Calculate the offset values
+        ctx.translate(x,y);
+        
+        // Draw all elements off the pattern
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<2; j++) {
+            triangle2TestPattern(ctx,width/2,height/2);
+            ctx.scale(-1,1);
+          }
+          ctx.scale(1,-1);         
+        }
+         
+        ctx.translate(-x,-y);     
+      });
+    }
 
-		// Draw original (bottom left) 
- 		ctx.translate(x-xOffset,y+yOffset);
-	    rectTestPattern(ctx,width/2,height/2);
-		ctx.translate(-(x-xOffset),-(y+yOffset));
-
-		// Draw mirror image (top left)
-		ctx.translate(x-xOffset,y-yOffset);
-        ctx.scale(1,-1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(1,-1);
-		ctx.translate(-(x-xOffset),-(y-yOffset));
-	
-        // (top right)	
-        ctx.translate(x+xOffset,y-yOffset);
-        ctx.scale(-1,1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(-1,1);
-		ctx.translate(-(x+xOffset),-(y-yOffset));
-
-        // (bottom right)
-		ctx.translate(x+xOffset,y+yOffset);
-        ctx.scale(-1,-1);
-	    rectTestPattern(ctx,width/2,height/2);
-        ctx.scale(-1,-1);
-		ctx.translate(-(x+xOffset),-(y+yOffset));
-    });
-  }
-
-  // Group 6
-  var p4 = function(ctx, length, patternAngle) {
-    rectGrid(ctx, length, length, patternAngle, function(x,y) {
-
-		// Calculate the offset values
+    // Group 10
+    var p4 = function(ctx, length, patternAngle=0) {
+      rectGrid(ctx, length, length, patternAngle, function(x,y) {
+      
+        // Move the origin to the center plus offset of our desired pattern
         var offset=length/4;
-
-		// Draw original (bottom left) 
- 		ctx.translate(x-offset,y+offset);
-	    rectTestPattern(ctx,length/2,length/2);
-		ctx.translate(-(x-offset),-(y+offset));
-
-		// Draw mirror image (top left)
-		ctx.translate(x-offset,y-offset);
-        ctx.rotate(Math.PI/2);
-	    rectTestPattern(ctx,length/2,length/2);
-        ctx.rotate(3*Math.PI/2);
-		ctx.translate(-(x-offset),-(y-offset));
-	
-        // (top right)	
-        ctx.translate(x+offset,y-offset);
-        ctx.rotate(Math.PI);
-	    rectTestPattern(ctx,length/2,length/2);
-        ctx.rotate(Math.PI);
-		ctx.translate(-(x+offset),-(y-offset));
-
-        // (bottom right)
-		ctx.translate(x+offset,y+offset);
-        ctx.rotate(3*Math.PI/2);
-	    rectTestPattern(ctx,length/2,length/2);
-        ctx.rotate(Math.PI/2);
-		ctx.translate(-(x+offset),-(y+offset));
-    });
-  }
-
-  var p4m = function(ctx, length, patternAngle) {
-    rectGrid(ctx, length, length, patternAngle, function(x,y) {
-
-        //x = canvas.width/2;
-        //y = canvas.height/2;
-
-        var midLength = Math.sqrt(Math.pow(length/2,2)+Math.pow(length/4,2));
-        var shortOffset = midLength*Math.sin(Math.PI/8)/2;
-        var longOffset = midLength*Math.cos(Math.PI/8)/2;
-
-		// Draw original (bottom left bottom) 
- 		ctx.translate(x-shortOffset,y+longOffset);
-	    triangle1TestPattern(ctx,length/2);
-		ctx.translate(-(x-shortOffset),-(y+longOffset));
-		
-        // (bottom left top) 
- 		ctx.translate(x-longOffset,y+shortOffset);
-        ctx.rotate(3*Math.PI/2);
-        ctx.scale(1,-1);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.scale(1,-1);
-        ctx.rotate(Math.PI/2);
-		ctx.translate(-(x-longOffset),-(y+shortOffset));
-
-        // (top left bottom) 
- 		ctx.translate(x-longOffset,y-shortOffset);
-        ctx.rotate(Math.PI/2);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.rotate(3*Math.PI/2);
-		ctx.translate(-(x-longOffset),-(y-shortOffset));
+        ctx.translate(x+offset,y+offset);
         
-        // (top left top) 
- 		ctx.translate(x-shortOffset,y-longOffset);
-        ctx.rotate(Math.PI);
-        ctx.scale(-1,1);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.scale(-1,1);
-        ctx.rotate(Math.PI);
-		ctx.translate(-(x-shortOffset),-(y-longOffset));
+        for (var i=0; i<4; i++) {
+          ctx.translate(length/2,0);
+          rectTestPattern(ctx,2*offset,2*offset);
+          ctx.rotate(Math.PI/2);
+        }
         
-        // (top right top) 
- 		ctx.translate(x+shortOffset,y-longOffset);
-        ctx.rotate(Math.PI);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.rotate(Math.PI);
-		ctx.translate(-(x+shortOffset),-(y-longOffset));
+        // Recenter our current position
+        ctx.translate(-(x+offset),-(y+offset)); 
+    
+      });
+    }
+    
+    // Group 11
+    var p4m = function(ctx, length, patternAngle=0) {
+      rectGrid(ctx, length, length, patternAngle, function(x,y) {
+      
+        //var x = window.innerWidth/2;
+        //var y = window.innerHeight/2;
+      
+        // Move the origin to the center of our desired pattern
+        ctx.translate(x,y);
 
-        // (top right bottom) 
- 		ctx.translate(x+longOffset,y-shortOffset);
-        ctx.rotate(Math.PI/2);
-        ctx.scale(1,-1);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.scale(1,-1);
-        ctx.rotate(3*Math.PI/2);
-		ctx.translate(-(x+longOffset),-(y-shortOffset));
-		
-        // (top left top) 
- 		ctx.translate(x+longOffset,y+shortOffset);
-        ctx.rotate(3*Math.PI/2);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.rotate(Math.PI/2);
-		ctx.translate(-(x+longOffset),-(y+shortOffset));
-	
-    	// (top left bottom) 
- 		ctx.translate(x+shortOffset,y+longOffset);
-        ctx.scale(-1,1);
-	    triangle1TestPattern(ctx,length/2);
-        ctx.scale(-1,1);
-		ctx.translate(-(x+shortOffset),-(y+longOffset));
-    });
-  }
+        // Draw the pattern
+        for (var i=0; i<4; i++) {
+          triangle3TestPattern(ctx,length/2);
+          ctx.scale(1,-1);
+          triangle3TestPattern(ctx,length/2);
+          ctx.scale(1,-1);
+          ctx.rotate(Math.PI/2);
+        }
+        
+        // Recenter the origin
+        ctx.translate(-x,-y);
+      });
+    }
+   
+    // Group 12
+    var p4g = function(ctx, length, patternAngle=0) {
+      rectGrid(ctx, length, length, patternAngle, function(x,y) {
+     
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x,y);
+        
+        for (var i=0; i<4; i++) {    
+          triangle2TestPattern(ctx,length/2,length/2);
+          ctx.translate(-length/2,-length/2);
+          ctx.scale(-1,1);
+          triangle2TestPattern(ctx,length/2,length/2);
+          ctx.scale(-1,1);
+          ctx.translate(length/2,length/2);
+          ctx.rotate(Math.PI/2);
+        }
+        
+        // Recenter our current position
+        ctx.translate(-x,-y); 
+    
+      });
+    }
+    
+    // Group 13
+    var p3 = function(ctx, length, patternAngle=0) {
+    
+      var angle=Math.PI/6;
+      var altitude=Math.sqrt(3)*length/2;
+      var height=altitude-Math.sqrt(3)/3*length;
+    
+     rhombicGrid(ctx, 2*altitude, 3*length, patternAngle, function(x,y) {
+     
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x,y);
+        
+        // Rotate to get our hexagons to line up
+        ctx.rotate(Math.PI/6);
+        
+        for (var j=0; j<3; j++) {
+          rombicTestPattern(ctx, length);
+          ctx.rotate(2*Math.PI/3);
+        }
+        
+        // Rotate back
+        ctx.rotate(-Math.PI/6);
+  
+        // Recenter our current position
+        ctx.translate(-x,-y); 
+    
+      });
+    } 
+    
+    // Group 14
+    var p3m1 = function(ctx, length, patternAngle=0) {
+    
+      var angle=Math.PI/6;
+      var altitude=Math.sqrt(3)*length/2;
+      var height=altitude-Math.sqrt(3)/3*length;
+    
+     rhombicGrid(ctx, 2*altitude, 3*length, patternAngle, function(x,y) {
 
-  p4m(context,50,45);
+        // Move the origin to the center plus offset of our desired pattern
+        ctx.translate(x,y);
+        
+        // Rotate to get our hexagons to line up
+        ctx.rotate(Math.PI/6);
+        
+        for (var i=0; i<3; i++) {
+          //ctx.translate(length/2,(i%2==0?-1:1)*altitude/2);
+          for (var j=0; j<2; j++) {
+            triangle4TestPattern(ctx,length);
+            ctx.scale(-1,1);
+            ctx.rotate(Math.PI/3);
+          }
+          ctx.rotate(2*Math.PI/3);
+        }
+        
+        // Rotate back
+        ctx.rotate(-Math.PI/6);
+  
+        // Recenter our current position
+        ctx.translate(-x,-y); 
+    
+      });
+    }
+    
+    // Group 15
+    var p31m = function(ctx, length, patternAngle=0) {
+      
+      var angle=Math.PI/6;
+      var altitude=Math.sqrt(3)*length/2;
+      var height=altitude-Math.sqrt(3)/3*length;
+     
+      rhombicGrid(ctx, length, 2*altitude, patternAngle, function(x,y) {
+       
+        // Move the origin to the center plus offset of our desired pattern
+        var xOffset=height*Math.cos(angle);
+        var yOffset=height*Math.sin(angle);
+        ctx.translate(x-xOffset,y+yOffset);
+               
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<3; j++) {
+            triangle5TestPattern(ctx,length,height);
+            ctx.rotate(2*Math.PI/3);
+          }
+          ctx.rotate(Math.PI);
+          ctx.scale(-1,1);
+          ctx.translate(2*xOffset,2*yOffset);
+        }
+        
+        // Recenter our current position
+        ctx.translate(-(x+3*xOffset),-(y+yOffset)); 
+  
+      });
+    }
+    
+    // Group 16
+    var p6 = function(ctx, length, patternAngle=0) {
+      
+      var angle=Math.PI/6;
+      var altitude=Math.sqrt(3)*length/2;
+      var height=altitude-Math.sqrt(3)/3*length;
+     
+      rhombicGrid(ctx, length, 2*altitude, patternAngle, function(x,y) {
+      
+        var xOffset=height*Math.cos(angle);
+        var yOffset=height*Math.sin(angle);
+        ctx.translate(x-xOffset,y+yOffset);
+              
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<3; j++) {
+            triangle5TestPattern(ctx,length,height);
+            ctx.rotate(2*Math.PI/3);
+          }
+          ctx.rotate(Math.PI);
+          ctx.translate(-2*xOffset,2*yOffset);
+        }
+        
+        // Recenter our current position
+        ctx.translate(-(x-xOffset),-(y+yOffset));  
+      });
+    }
+    
+    // Group 17
+    var p6m = function(ctx, length, patternAngle=0) {
+      
+      var angle=Math.PI/6;
+      var altitude=Math.sqrt(3)*length/2;
+      var height=altitude-Math.sqrt(3)/3*length;
+    
+      rhombicGrid(ctx, length, 2*altitude, patternAngle, function(x,y) {
+      
+        //var x = window.innerWidth/2;
+        //var y = window.innerHeight/2;
+      
+        // Move the origin to the center plus offset of our desired pattern
+     
+        var xOffset=height*Math.cos(angle);
+        var yOffset=height*Math.sin(angle);
+        ctx.translate(x-xOffset,y+yOffset);
+          
+        for (var i=0; i<2; i++) {
+          for (var j=0; j<6; j++) {
+            triangle3TestPattern(ctx,length/2,height);
+            ctx.rotate(2*Math.PI/3);
+            ctx.scale(-1,1);
+            triangle3TestPattern(ctx,length/2,height);
+            ctx.scale(-1,1);
+          }
+          ctx.rotate(Math.PI);
+          ctx.translate(-2*xOffset,2*yOffset);
+        }
+        
+        // Recenter our current position
+        ctx.translate(-(x-xOffset),-(y+yOffset)); 
+    
+      });
+    }    
+  //}
 
+  
+  
+  p4g(context,200,45);
+  
     </script>
   </body>
 </html>
