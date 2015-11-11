@@ -16,7 +16,10 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-  var drawKey = function(ctx, xOffset=0, yOffset=0) {
+  var drawKey = function(ctx, xOffset, yOffset) {
+    xOffset = typeof xOffset !== 'undefined' ? xOffset : 0;
+	yOffset = typeof yOffset !== 'undefined' ? yOffset : 0;
+	
     ctx.beginPath();
     ctx.arc(-15+xOffset,0+yOffset,5,0,2*Math.PI);
     ctx.moveTo(-10+xOffset,0+yOffset);
@@ -58,7 +61,8 @@
     ctx.closePath();
   }
   
-  var triangle1TestPattern = function(ctx, width, height=width) {
+  var triangle1TestPattern = function(ctx, width, height) {
+	height = typeof height !== 'undefined' ? height : width;
 
     var x1=width;
     var y1=0;
@@ -68,7 +72,9 @@
     triangleTestPattern(ctx,x1,x2,y1,y2);
   }
   
-  var triangle2TestPattern = function(ctx, width, height=width) {
+  var triangle2TestPattern = function(ctx, width, height) {
+	height = typeof height !== 'undefined' ? height : width;
+
   
     var x1=0;
     var y1=height;
@@ -78,7 +84,8 @@
     triangleTestPattern(ctx,x1,x2,y1,y2);
   }
   
-  var triangle3TestPattern = function(ctx, width, height=width) {
+  var triangle3TestPattern = function(ctx, width, height) {
+	height = typeof height !== 'undefined' ? height : width;
 
     var x1=0;
     var y1=height;
@@ -98,7 +105,8 @@
     triangleTestPattern(ctx,x1,x2,y1,y2);
   }
   
-  var triangle5TestPattern = function(ctx, width, height=width) {
+  var triangle5TestPattern = function(ctx, width, height) {
+	height = typeof height !== 'undefined' ? height : width;
   
     var x1=width/2;
     var y1=height;
@@ -187,7 +195,12 @@
   
     return {
       // Group 1
-      p1 : function(ctx, width, height=width, patternAngle=0, skewAngle=0, skew=true) {
+      p1 : function(ctx, width, height, patternAngle, skewAngle, skew) {
+        height = typeof height !== 'undefined' ? height : width;
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
+	    skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
+	    skew = typeof skew !== 'undefined' ? skew : true;
+		
         if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
         obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
         
@@ -203,9 +216,14 @@
       },
     
       // Group 2
-      p2 : function(ctx, width, height=width, patternAngle=0, skewAngle=0, skew=true) {
-      if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
-        obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {
+      p2 : function(ctx, width, height, patternAngle, skewAngle, skew) {
+        height = typeof height !== 'undefined' ? height : width;
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
+	    skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
+	    skew = typeof skew !== 'undefined' ? skew : true;
+
+	    if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
+          obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {
         
           // Move the origin to the center plus offset of our desired pattern
           ctx.translate(x,y+height/2);
@@ -229,7 +247,10 @@
       },
     
       // Group 3
-      pm : function(ctx, width, height=width, patternAngle=0) {
+      pm : function(ctx, width, height, patternAngle) {
+        height = typeof height !== 'undefined' ? height : width;
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
+		
         rectGrid(ctx, width, 2*height, patternAngle, function(x,y) {
           
           // Move the origin to the center plus offset of our desired pattern
@@ -248,7 +269,10 @@
       },
     
       // Group 4
-      pg : function(ctx, width, height=width, patternAngle=0) {
+      pg : function(ctx, width, height, patternAngle) {
+        height = typeof height !== 'undefined' ? height : width;
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
+	  
         rectGrid(ctx, 2*width, height, patternAngle, function(x,y) {
     
           // Move the origin to the center plus offset of our desired pattern
@@ -267,7 +291,9 @@
       },
       
       // Group 5
-      cm : function(ctx, width, height, patternAngle=0) {
+      cm : function(ctx, width, height, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	  
         rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
     
           // Move the origin to the center plus offset of our desired pattern
@@ -286,9 +312,11 @@
       },
     
       // Group 6
-      pmm : function(ctx, width, height, patternAngle=0) {
+      pmm : function(ctx, width, height, patternAngle) {
+        patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+
         rectGrid(ctx, width, height, patternAngle, function(x,y) {
-        
+
           // Calculate the offset values
           var xOffset=width/4;
           var yOffset=height/4;
@@ -310,7 +338,9 @@
       },
     
       // Group 7
-      pmg : function(ctx, width, height, patternAngle=0) {
+      pmg : function(ctx, width, height, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+
         rectGrid(ctx, width, height, patternAngle, function(x,y) {
         
           // Move the origin to the center plus offset of our desired pattern
@@ -335,7 +365,9 @@
       },
     
       // Group 8
-      pgg : function(ctx, width, height, patternAngle=0) {
+      pgg : function(ctx, width, height, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	  	  
         rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
           
           // Calculate the offset values
@@ -356,7 +388,9 @@
       
       
       // Group 9
-      cmm : function(ctx, width, height, patternAngle=0) {
+      cmm : function(ctx, width, height, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	  	  
         rhombicGrid(ctx, width, height, patternAngle, function(x,y) {
           
           // Calculate the offset values
@@ -376,7 +410,9 @@
       },
     
       // Group 10
-      p4 : function(ctx, length, patternAngle=0) {
+      p4 : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	   	  
         rectGrid(ctx, length, length, patternAngle, function(x,y) {
         
           // Move the origin to the center plus offset of our desired pattern
@@ -396,7 +432,9 @@
       },
       
       // Group 11
-      p4m : function(ctx, length, patternAngle=0) {
+      p4m : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	  	 
         rectGrid(ctx, length, length, patternAngle, function(x,y) {
         
           // Move the origin to the center of our desired pattern
@@ -417,7 +455,9 @@
       },
     
       // Group 12
-      p4g : function(ctx, length, patternAngle=0) {
+      p4g : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+	  	  
         rectGrid(ctx, length, length, patternAngle, function(x,y) {
       
           // Move the origin to the center plus offset of our desired pattern
@@ -440,7 +480,8 @@
       },
       
       // Group 13
-      p3 : function(ctx, length, patternAngle=0) {
+      p3 : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
       
         var angle=Math.PI/6;
         var altitude=Math.sqrt(3)*length/2;
@@ -469,8 +510,9 @@
       },
       
       // Group 14
-      p3m1 : function(ctx, length, patternAngle=0) {
-      
+      p3m1 : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+      	  
         var angle=Math.PI/6;
         var altitude=Math.sqrt(3)*length/2;
         var height=altitude-Math.sqrt(3)/3*length;
@@ -503,8 +545,9 @@
       },
       
       // Group 15
-      p31m : function(ctx, length, patternAngle=0) {
-        
+      p31m : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
+       
         var angle=Math.PI/6;
         var altitude=Math.sqrt(3)*length/2;
         var height=altitude-Math.sqrt(3)/3*length;
@@ -533,7 +576,8 @@
       },
       
       // Group 16
-      p6 : function(ctx, length, patternAngle=0) {
+      p6 : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
         
         var angle=Math.PI/6;
         var altitude=Math.sqrt(3)*length/2;
@@ -560,7 +604,8 @@
       },
       
       // Group 17
-      p6m : function(ctx, length, patternAngle=0) {
+      p6m : function(ctx, length, patternAngle) {
+	    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;	  
         
         var angle=Math.PI/6;
         var altitude=Math.sqrt(3)*length/2;
@@ -593,8 +638,26 @@
   })
   ()
   
-  Wallpaper.p4g(context,200,45);
+  //Wallpaper.p1(context,150,75);
+  //Wallpaper.p2(context,150,75);
+  //Wallpaper.pm(context,150,75);
+  //Wallpaper.pg(context,150,75);
+  //Wallpaper.cm(context,150,75);
+  //Wallpaper.pmm(context,150,75);
+  //Wallpaper.pmg(context,150,75);
+  //Wallpaper.pgg(context,150,75);
+  //Wallpaper.cmm(context,150,75);
+  //Wallpaper.p4(context,150);
+  //Wallpaper.p4m(context,150);
+  //Wallpaper.p4g(context,150);
+  //Wallpaper.p3(context,150);
+  //Wallpaper.p3m1(context,150);
+  //Wallpaper.p31m(context,150);
+  //Wallpaper.p6(context,150);
+  //Wallpaper.p6m(context,150);
+ 
   
+    
     </script>
   </body>
 </html>
