@@ -638,23 +638,62 @@
   })
   ()
   
-  //Wallpaper.p1(context,150,75);
-  //Wallpaper.p2(context,150,75);
-  //Wallpaper.pm(context,150,75);
-  //Wallpaper.pg(context,150,75);
-  //Wallpaper.cm(context,150,75);
-  //Wallpaper.pmm(context,150,75);
-  //Wallpaper.pmg(context,150,75);
-  //Wallpaper.pgg(context,150,75);
-  //Wallpaper.cmm(context,150,75);
-  //Wallpaper.p4(context,150);
-  //Wallpaper.p4m(context,150);
-  //Wallpaper.p4g(context,150);
-  //Wallpaper.p3(context,150);
-  //Wallpaper.p3m1(context,150);
-  //Wallpaper.p31m(context,150);
-  //Wallpaper.p6(context,150);
-  //Wallpaper.p6m(context,150);
+var clear = function(ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); };
+  var timeout = 1500;
+  var height=180;
+  var width=height/2;
+  
+  Wallpaper.p1(context,height/2,width/2);
+  setTimeout(function() {clear(context);
+      Wallpaper.p2(context,height/2,width/2);
+      setTimeout(function() {clear(context);
+	    Wallpaper.pm(context,height/2,width/2);
+        setTimeout(function() {clear(context);
+          Wallpaper.pg(context,height/2,width/2);
+          setTimeout(function() {clear(context);
+            Wallpaper.cm(context,height,width);
+            setTimeout(function() {clear(context);
+              Wallpaper.pmg(context,height,width);
+              setTimeout(function() {clear(context);
+				Wallpaper.pmm(context,height,width);
+                setTimeout(function() {clear(context);
+                  Wallpaper.pgg(context,height,width);
+                  setTimeout(function() {clear(context);
+                    Wallpaper.cmm(context,height,width);
+                    setTimeout(function() {clear(context);
+                      Wallpaper.p4(context,height);
+                      setTimeout(function() {clear(context);
+                        Wallpaper.p4m(context,height);
+                        setTimeout(function() {clear(context);
+                          Wallpaper.p4g(context,height);
+                          setTimeout(function() {clear(context);
+                            Wallpaper.p3(context,height/2);
+                            setTimeout(function() {clear(context);
+                              Wallpaper.p3m1(context,height/2);
+                              setTimeout(function() {clear(context);
+                                Wallpaper.p31m(context,height);
+                                setTimeout(function() {clear(context);
+                                  Wallpaper.p6(context,height);
+                                  setTimeout(function() {clear(context);
+                                    Wallpaper.p6m(context,height);
+                                    setTimeout(function() {clear(context)},timeout);
+                                },timeout);
+                              },timeout);
+                            },timeout);
+                          },timeout);
+                        },timeout);
+                      },timeout);
+                    },timeout);
+                  },timeout);
+                },timeout);
+              },timeout);
+            },timeout);
+          },timeout);
+        },timeout);
+      },timeout);
+    },timeout);
+  },timeout);
+ 
  
   
     
