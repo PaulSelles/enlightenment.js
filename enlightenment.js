@@ -3,52 +3,52 @@ var Wallpaper = (function() {
   var Mask = (function() {
     var triangle = function(ctx, drawFunction, x1, x2, y1, y2) {
       
-    var xOffset=(1/3)*(x1+x2);
-    var yOffset=(1/3)*(y1+y2);
+      var xOffset=(1/3)*(x1+x2);
+      var yOffset=(1/3)*(y1+y2);
         
-    ctx.save();
+      ctx.save();
       
-    ctx.beginPath();
-    ctx.moveTo(0,0);
-    ctx.lineTo(x1,y1);
-    ctx.lineTo(x2,y2);
-    ctx.lineTo(0,0);
-    ctx.closePath();
-    
-    ctx.clip();
-    drawFunction(ctx,xOffset,yOffset);
-    	
-    ctx.restore();
-  };
-  
-  return {
-      rectangle : function(ctx, drawFunction, width, height) {
-	
-  	  ctx.save();
-	  
       ctx.beginPath();
-      ctx.rect(-width/2,-height/2,width,height);
-	  ctx.closePath();        
-  	  ctx.clip();
-	  drawFunction(ctx,0,0);
-  	  
-  	  ctx.restore();
+      ctx.moveTo(0,0);
+      ctx.lineTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineTo(0,0);
+      ctx.closePath();
+    
+      ctx.clip();
+      drawFunction(ctx,xOffset,yOffset);
+    	
+      ctx.restore();
+    };
+  
+    return {
+      rectangle : function(ctx, drawFunction, width, height) {
+      
+	    ctx.save();
+	    
+        ctx.beginPath();
+        ctx.rect(-width/2,-height/2,width,height);
+	    ctx.closePath();        
+  	    ctx.clip();
+	    drawFunction(ctx,0,0);
+  	    
+  	    ctx.restore();
       },
-    
+      
       triangle1 : function(ctx, drawFunction, width, height) {
-    	height = typeof height !== 'undefined' ? height : width;
-    
+  	  height = typeof height !== 'undefined' ? height : width;
+      
         var x1=width;
         var y1=0;
         var x2=width/2;
         var y2=height;
-    
+      
         triangle(ctx, drawFunction, x1, x2, y1, y2);
       },
       
       triangle2 : function(ctx, drawFunction, width, height) {
-    	height = typeof height !== 'undefined' ? height : width;
-    
+  	  height = typeof height !== 'undefined' ? height : width;
+      
       
         var x1=0;
         var y1=height;
@@ -59,8 +59,8 @@ var Wallpaper = (function() {
       },
       
       triangle3 : function(ctx, drawFunction, width, height) {
-    	height = typeof height !== 'undefined' ? height : width;
-    
+  	  height = typeof height !== 'undefined' ? height : width;
+      
         var x1=0;
         var y1=height;
         var x2=-width;
@@ -80,7 +80,7 @@ var Wallpaper = (function() {
       },
       
       triangle5 : function(ctx, drawFunction, width, height) {
-    	height = typeof height !== 'undefined' ? height : width;
+  	  height = typeof height !== 'undefined' ? height : width;
       
         var x1=width/2;
         var y1=height;
@@ -109,15 +109,15 @@ var Wallpaper = (function() {
         ctx.lineTo(x2,y2);
         ctx.lineTo(x3,y3);
         ctx.lineTo(0,0);
-    	ctx.closePath();
-    
-    	ctx.clip();
-    	drawFunction(ctx,xOffset,0);
-    	
-    	ctx.restore();
-	  }
+  	    ctx.closePath();
+      
+  	    ctx.clip();
+  	    drawFunction(ctx,xOffset,0);
+  	  
+  	    ctx.restore();
+      }
     };
-})
+  })
   ()
  
   var rectGrid = function(ctx, width, height, patternAngle, patternFunction) {
@@ -181,8 +181,7 @@ var Wallpaper = (function() {
       skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
 	
       if (skewAngle < -45 || skewAngle > 45) { throw "The pattern angle must be between -45 and 45 degress." }
-      obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
-      
+      obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {      
 	    ctx.save();
 	  
         var offset=height*Math.tan(skewAngle*Math.PI/180)/2;
@@ -191,7 +190,6 @@ var Wallpaper = (function() {
         ctx.translate(x+offset,y);
         if (skewAngle != 0) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
         Mask.rectangle(ctx, drawFunction,width,height);
-        //if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }		
 		ctx.restore();
       });
     },
@@ -199,17 +197,16 @@ var Wallpaper = (function() {
     // Group 2
     p2 : function(ctx, drawFunction, width, height, patternAngle, skewAngle) {
       height = typeof height !== 'undefined' ? height : width;
-    patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
-    skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
+      patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
+      skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
 
-    if (skewAngle < -45 || skewAngle > 45) { throw "The pattern angle must be between -45 and 45 degress." }
-        obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {
-      
+      if (skewAngle < -45 || skewAngle > 45) { throw "The pattern angle must be between -45 and 45 degress." }
+      obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {      
 	    ctx.save();
 	  
         // Move the origin to the center plus offset of our desired pattern
-        ctx.translate(x,y+height/2);
-  
+        ctx.translate(x,y+height/2);  
+		
         // Initiate skew
         if (skewAngle != 0) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
         
@@ -219,9 +216,6 @@ var Wallpaper = (function() {
           ctx.translate(0,-height);
           ctx.scale(-1,-1);
         }
-        
-        // remove skew
-        //if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
         
         // Recenter the origin       
 		ctx.restore();
