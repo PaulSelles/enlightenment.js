@@ -175,13 +175,12 @@ var Wallpaper = (function() {
 
   return {
     // Group 1
-    p1 : function(ctx, drawFunction, width, height, patternAngle, skewAngle, skew) {
+    p1 : function(ctx, drawFunction, width, height, patternAngle, skewAngle) {
       height = typeof height !== 'undefined' ? height : width;
       patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
       skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
-      skew = typeof skew !== 'undefined' ? skew : false;
 	
-      if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
+      if (skewAngle < -45 || skewAngle > 45) { throw "The pattern angle must be between -45 and 45 degress." }
       obliqueGrid(ctx, width, height, patternAngle, skewAngle, function(x,y) {
       
 	    ctx.save();
@@ -190,7 +189,7 @@ var Wallpaper = (function() {
   
         // Draw original
         ctx.translate(x+offset,y);
-        if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        if (skewAngle != 0) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
         Mask.rectangle(ctx, drawFunction,width,height);
         //if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }		
 		ctx.restore();
@@ -198,12 +197,12 @@ var Wallpaper = (function() {
     },
   
     // Group 2
-    p2 : function(ctx, drawFunction, width, height, patternAngle, skewAngle, skew) {
+    p2 : function(ctx, drawFunction, width, height, patternAngle, skewAngle) {
       height = typeof height !== 'undefined' ? height : width;
     patternAngle = typeof patternAngle !== 'undefined' ? patternAngle : 0;
     skewAngle = typeof skewAngle !== 'undefined' ? skewAngle : 0;
-    skew = typeof skew !== 'undefined' ? skew : false;
-    if (skewAngle < -90 || skewAngle > 90) { throw "The pattern angle must be between -45 and 45 degress." }
+
+    if (skewAngle < -45 || skewAngle > 45) { throw "The pattern angle must be between -45 and 45 degress." }
         obliqueGrid(ctx, width, 2*height, patternAngle, skewAngle, function(x,y) {
       
 	    ctx.save();
@@ -212,14 +211,14 @@ var Wallpaper = (function() {
         ctx.translate(x,y+height/2);
   
         // Initiate skew
-        if (skew) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
+        if (skewAngle != 0) { ctx.transform(1,0,Math.tan(skewAngle*Math.PI/180),1,0,0); }
         
         // Draw all elements off the pattern
         for (var i=0; i<2; i++) {
           Mask.rectangle(ctx, drawFunction,width,height);
           ctx.translate(0,-height);
           ctx.scale(-1,-1);
-        }      
+        }
         
         // remove skew
         //if (skew) { ctx.transform(1,0,-Math.tan(skewAngle*Math.PI/180),1,0,0); }
